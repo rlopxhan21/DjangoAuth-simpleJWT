@@ -1,0 +1,413 @@
+swagger: '2.0'
+info:
+  title: Django Authentication API
+  description: Django Simple JWT Authentication API
+  termsOfService: https://www.google.com/policies/terms/
+  contact:
+    email: rlopxhan21@gmail.com
+  license:
+    name: Creative Commons Attribution 4.0 International License
+  version: v1
+host: localhost:8000
+schemes:
+  - http
+basePath: /user
+consumes:
+  - application/json
+produces:
+  - application/json
+securityDefinitions:
+  Basic:
+    type: basic
+security:
+  - Basic: []
+paths:
+  /blacklist/:
+    post:
+      operationId: blacklist_create
+      description: |-
+        Takes a token and blacklists it. Must be used with the
+        `rest_framework_simplejwt.token_blacklist` app installed.
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/TokenBlacklist'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/TokenBlacklist'
+      tags:
+        - blacklist
+    parameters: []
+  /login/:
+    post:
+      operationId: login_create
+      description: A class for custom token generation and used for login requests.
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/MyTokenObtainPair'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/MyTokenObtainPair'
+      tags:
+        - login
+    parameters: []
+  /refresh/:
+    post:
+      operationId: refresh_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/TokenRefresh'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/TokenRefresh'
+      tags:
+        - refresh
+    parameters: []
+  /register/:
+    post:
+      operationId: register_create
+      description: A class for registering user
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Registration'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/Registration'
+      tags:
+        - register
+    parameters: []
+  /users/:
+    get:
+      operationId: users_list
+      description: A class for retrieving all user profile data
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ProfileData'
+      tags:
+        - users
+    parameters: []
+  /users/{id}/:
+    get:
+      operationId: users_read
+      description: A class for retrieving a single user profile data
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/ProfileData'
+      tags:
+        - users
+    parameters:
+      - name: id
+        in: path
+        description: A unique integer value identifying this user.
+        required: true
+        type: integer
+  /users/{id}/passupdate/:
+    put:
+      operationId: users_passupdate_update
+      description: A class for updating user password
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/PasswordChange'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/PasswordChange'
+      tags:
+        - users
+    parameters:
+      - name: id
+        in: path
+        description: A unique integer value identifying this user.
+        required: true
+        type: integer
+  /users/{id}/profileimg/:
+    put:
+      operationId: users_profileimg_update
+      description: A class for updating user profile image
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ProfileImage'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/ProfileImage'
+      tags:
+        - users
+    parameters:
+      - name: id
+        in: path
+        description: A unique integer value identifying this user.
+        required: true
+        type: integer
+  /users/{id}/update/:
+    put:
+      operationId: users_update_update
+      description: A class for updating user profile data
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/BasicInfoChange'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/BasicInfoChange'
+      tags:
+        - users
+    parameters:
+      - name: id
+        in: path
+        description: A unique integer value identifying this user.
+        required: true
+        type: integer
+definitions:
+  TokenBlacklist:
+    required:
+      - refresh
+    type: object
+    properties:
+      refresh:
+        title: Refresh
+        type: string
+        minLength: 1
+  MyTokenObtainPair:
+    required:
+      - email
+      - password
+    type: object
+    properties:
+      email:
+        title: Email
+        type: string
+        minLength: 1
+      password:
+        title: Password
+        type: string
+        minLength: 1
+  TokenRefresh:
+    required:
+      - refresh
+    type: object
+    properties:
+      refresh:
+        title: Refresh
+        type: string
+        minLength: 1
+      access:
+        title: Access
+        type: string
+        readOnly: true
+        minLength: 1
+  Registration:
+    required:
+      - username
+      - email
+      - password
+      - password2
+    type: object
+    properties:
+      first_name:
+        title: First name
+        type: string
+        maxLength: 150
+      last_name:
+        title: Last name
+        type: string
+        maxLength: 150
+      username:
+        title: Username
+        description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+          only.
+        type: string
+        pattern: ^[\w.@+-]+$
+        maxLength: 150
+        minLength: 1
+      email:
+        title: Email
+        type: string
+        format: email
+        maxLength: 255
+        minLength: 1
+      password:
+        title: Password
+        type: string
+        maxLength: 128
+        minLength: 1
+      password2:
+        title: Password2
+        type: string
+        minLength: 1
+  ProfileData:
+    required:
+      - username
+      - email
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      last_login:
+        title: Last login
+        type: string
+        format: date-time
+        x-nullable: true
+      is_superuser:
+        title: Superuser status
+        description: Designates that this user has all permissions without explicitly
+          assigning them.
+        type: boolean
+      username:
+        title: Username
+        description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+          only.
+        type: string
+        pattern: ^[\w.@+-]+$
+        maxLength: 150
+        minLength: 1
+      first_name:
+        title: First name
+        type: string
+        maxLength: 150
+      last_name:
+        title: Last name
+        type: string
+        maxLength: 150
+      is_staff:
+        title: Staff status
+        description: Designates whether the user can log into this admin site.
+        type: boolean
+      is_active:
+        title: Active
+        description: Designates whether this user should be treated as active. Unselect
+          this instead of deleting accounts.
+        type: boolean
+      date_joined:
+        title: Date joined
+        type: string
+        format: date-time
+      email:
+        title: Email
+        type: string
+        format: email
+        maxLength: 255
+        minLength: 1
+      profileImage:
+        title: ProfileImage
+        type: string
+        readOnly: true
+        x-nullable: true
+        format: uri
+      groups:
+        description: The groups this user belongs to. A user will get all permissions
+          granted to each of their groups.
+        type: array
+        items:
+          description: The groups this user belongs to. A user will get all permissions
+            granted to each of their groups.
+          type: integer
+        uniqueItems: true
+      user_permissions:
+        description: Specific permissions for this user.
+        type: array
+        items:
+          description: Specific permissions for this user.
+          type: integer
+        uniqueItems: true
+  PasswordChange:
+    required:
+      - password
+      - newpassword
+      - newpassword2
+    type: object
+    properties:
+      password:
+        title: Password
+        type: string
+        maxLength: 128
+        minLength: 1
+      newpassword:
+        title: Newpassword
+        type: string
+        minLength: 1
+      newpassword2:
+        title: Newpassword2
+        type: string
+        minLength: 1
+  ProfileImage:
+    type: object
+    properties:
+      profileImage:
+        title: ProfileImage
+        type: string
+        readOnly: true
+        x-nullable: true
+        format: uri
+  BasicInfoChange:
+    required:
+      - username
+      - email
+    type: object
+    properties:
+      username:
+        title: Username
+        description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+          only.
+        type: string
+        pattern: ^[\w.@+-]+$
+        maxLength: 150
+        minLength: 1
+      first_name:
+        title: First name
+        type: string
+        maxLength: 150
+      last_name:
+        title: Last name
+        type: string
+        maxLength: 150
+      email:
+        title: Email
+        type: string
+        format: email
+        maxLength: 255
+        minLength: 1
