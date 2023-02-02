@@ -24,7 +24,3 @@ urlpatterns = [
     path('users/<int:pk>/profileimg/',
          ProfileImageView.as_view(), name="profile_image"),
 ]
-
-#
-
-#
