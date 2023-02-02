@@ -1,5 +1,6 @@
 from rest_framework import permissions
 
+
 class SuperUserorOwnerorReadOnly(permissions.BasePermission):
     """" Object-level permission to only allow owners or superuser or staff of an object to edit it. """
 
