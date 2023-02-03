@@ -37,6 +37,20 @@ class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
 
+class BlackListTokenView(mixins.CreateModelMixin, generics.GenericAPIView):
+    permissions_classes = [SuperUserorOwnerorReadOnly]
+
+    def post(self, request, *args, **kwargs):
+        try:
+            refresh_token = request.data.get("refresh_token")
+            token_obj = RefreshToken(refresh_token)
+            token_obj.blacklist()
+
+            return Response(status=status.HTTP_200_OK)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
 class ProfileDataView(mixins.ListModelMixin, generics.GenericAPIView):
     """ A class for retrieving all user profile data """
     serializer_class = ProfileDataSerializer
